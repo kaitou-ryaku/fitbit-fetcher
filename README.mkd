@@ -1,0 +1,157 @@
+FitbitのデータをPCにバックアップするためのスクリプト
+====================================================
+
+Fitbitがスマホ操作で使用できる状況から、
+PCにデータをバックアップするための環境を構築する。
+
+Windows 7 + Python 3.6.3 で動作確認済み (2018/01/21)。
+
+アプリアカウントの作成
+----------------------
+
+<https://dev.fitbit.com/apps>
+
+のREGISTER AN APPからアプリを登録。
+
+|項目|値|
+|:--|:--|
+|Application Name| てきとう|
+|Description| てきとうに10文字以上|
+|Application Website| http://www.てきとう|
+|Organization| てきとう|
+|Organization Website| http://www.てきとう|
+|OAuth 2.0 Application Type **Personal**|
+|Callback URL| **http://127.0.0.1:8080/**  (最後のスラッシュが大事)|
+|Default Access Type| **Read-Only**|
+
+入力後に登録すると
+<https://dev.fitbit.com/apps/details/@@@ClientId@@@>
+に飛ぶ。
+
+* OAuth 2.0 Client ID
+* Client Secret
+
+をメモ。
+
+OAuth2.0周りの準備
+------------------
+
+OAuth 2.0 tutorial pageに移動。
+
+Flow typeをAuthorization Code Flow にする。
+
+* Fitbit URL:
+* Fitbit API URL:
+* OAuth 2.0 Client ID:
+* Client Secret:
+* Redirect URI:
+
+が自動で入力されているはず。
+
+<https://www.fitbit.com/oauth2/authorize?response_type=token&client_id=...>
+
+のようなリンクに跳び、許可を押す。
+
+URLバーの
+<http://localhost:8888/callback?code=@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@#_=_">
+の`@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@`をコピーする。
+`1A Get Code`に貼り付ける
+
+CURLコマンドが出るのでCUIで実行。
+JSON形式で結果が得られるのでコピーしてメモ
+
+`2 Parse response`
+に貼り付ける
+
+`3 Make Request`
+が生成される。
+
+CURLコマンドが出るので、CUIで実行。最後の部分のURLを
+<https://dev.fitbit.com/reference/web-api/heart-rate/#get-heart-rate-intraday-time-series>
+を参考に
+<https://api.fitbit.com/1/user/-/activities/heart/date/today/1d/1sec/time/00:00/00:01.json>
+などに変更してうまくいくことを確かめる。
+
+fitbit公式のpythonリポジトリの導入
+----------------------------------
+
+```sh
+$ git clone https://github.com/orcasgit/python-fitbit.git
+$ cd python-fitbit.git
+$ sudo pip install -r requirements/base.txt
+$ sudo pip install -r requirements/dev.txt
+$ sudo pip install -r requirements/test.txt
+$ sudo pip install cherrypy
+$ sudo pip install fitbit
+$ cp 今読んでるREADME.mkdのある場所/* .
+$ vi token.txt
+$ vi fetcher.py
+```
+
+ファイルの修正
+--------------
+
+* `token.txt`
+
+さっきメモしたJSON形式の結果を入れる。
+
+```
+{'access_token': '*********************************************************************************************************************************************************************************************************************************************************************************', 'expires_in': 28800, 'refresh_token': '****************************************************************', 'scope': ['profile', 'weight', 'activity', 'social', 'nutrition', 'location', 'settings', 'sleep', 'heartrate'], 'token_type': 'Bearer', 'user_id': '******', 'expires_at': **********.*****}
+```
+
+のアスタリスクに値が入る。
+
+* `fetcher.py`
+
+IDと鍵を登録する。
+
+```python
+CLIENT_ID     = 'さっきメモしたClient IDを入れる'
+CLIENT_SECRET = 'さっきメモしたClient Secretを入れる'
+```
+
+通常実行
+--------
+
+UNIX-likeなシェルがあれば
+
+```sh
+$ python fetcher.py
+```
+
+とすればデータが得られる。
+
+定期実行
+--------
+
+Windows環境から定期実行するには
+
+```bat
+cd "C:\...\python-fitbit"
+"C:\*****\Python36-32\python.exe" fetcher.py
+```
+
+というバッチファイルを作り、
+
+`スタート`
+-> `すべてのプログラム`
+-> `アクセサリ`
+-> `システムツール`
+-> `タスクスケジューラ`
+
+に登録。
+
+はまったところ
+--------------
+
+心拍の詳細なデータを取得しようとすると、permission deniedになった。
+三回ほどアプリを作り直すとうまくいった。
+原因は不明。
+
+distanceの単位はマイルだった。
+つまりdistanceのログに1とあれば、1.60934キロメートルになる。
+
+LICENSE
+-------
+
+MIT
