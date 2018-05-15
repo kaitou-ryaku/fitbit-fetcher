@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="jp">
+<head>
+<meta charset="utf-8"/>
+<script src="fitbit_js/plotly.js"></script>
+<script src="fitbit_js/common.js"></script>
+</head>
+<body>
+
+<form>
+  <input type="date" id="bgn_date">
+  <input type="date" id="end_date">
+  <button id="button">DRAW</button>
+</form>
+
+<script>
+  var today = new Date().setHours(0,0,0,0)/1000;
+  document.getElementById("bgn_date").value = translate_unixtime_to_yyyymmdd(today-7*24*3600);
+  document.getElementById("end_date").value = translate_unixtime_to_yyyymmdd(today);
+</script>
+
+<script src="fitbit_js/heart.js"></script>
+<script src="fitbit_js/steps.js"></script>
+<script src="fitbit_js/state.js"></script>
+<script src="fitbit_js/print.js"></script>
+<script src="fitbit_js/all_panel.js"></script>
+
+</body>
+</html>
