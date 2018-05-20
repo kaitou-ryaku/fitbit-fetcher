@@ -41,7 +41,7 @@ def get_sleep_analysis(get_day):
 
   f = open('{0}/{1}/{2}_{3}.csv'.format(CSV_PATH, "sleep_analysis", get_day.strftime("%Y-%m-%d"), "sleep_analysis"), 'w')
   for sleep in sleep_list:
-    if sleep[0].date() == day:
+    if sleep[0].date() == get_day:
       f.write(sleep[0].strftime("%H:%M:%S") + "," + sleep[1] + "\n")
   f.close()
 
