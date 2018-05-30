@@ -170,6 +170,14 @@ cd "C:\...\python-fitbit"
 distanceの単位はマイルだった。
 つまりdistanceのログに1とあれば、1.60934キロメートルになる。
 
+ブラウザでグラフを表示
+======================
+
+Google chrome
+-------------
+
+起動オプション `--allow-file-access-from-files` を付ける。
+
 LICENSE
 -------
 
