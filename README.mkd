@@ -173,6 +173,9 @@ distanceの単位はマイルだった。
 ブラウザでグラフを表示
 ======================
 
+[plotly.js最新版](https://cdn.plot.ly/plotly-latest.min.js)をダウンロードして`fitbit_js/plotly.js`という名前で保存。
+動作確認は[バージョン1.33.0](https://cdn.plot.ly/plotly-1.33.0.min.js)で検証済み。
+
 Google chrome
 -------------
 
