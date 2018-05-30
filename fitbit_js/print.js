@@ -8,7 +8,7 @@ function plot_daily_graph_all(frame) {
 
     plot_daily_graph_single("heart/"+yyyymmdd+"_heart.csv", frame);
     plot_daily_graph_single("steps/"+yyyymmdd+"_steps.csv", frame);
-    plot_daily_graph_single("sleep/"+yyyymmdd+"_sleep.csv", frame);
+    plot_daily_graph_single("sleep_analysis/"+yyyymmdd+"_sleep_analysis.csv", frame);
     // plot_daily_graph_single("minutesSedentary/"+yyyymmdd+"_minutesSedentary.csv", frame);
     plot_daily_graph_single("minutesFairlyActive/"+yyyymmdd+"_minutesFairlyActive.csv", frame);
     plot_daily_graph_single("minutesLightlyActive/"+yyyymmdd+"_minutesLightlyActive.csv", frame);
@@ -26,10 +26,11 @@ function plot_daily_graph_single(csvname, frame) {
   if      (isFileExists(weekly + csvname)) filename = weekly + csvname;
   else if (isFileExists(daily  + csvname)) filename = daily  + csvname;
   else return;
+  console.log(filename);
 
   var xhr = null;
   // 使える場合はMicrosoft.XMLHTTP, 使えない場合はXMLHttpRequest
-  try { xhr = new ActiveXObject("Msxml2.XMLHTTP"); } catch (e) { xhr = new XMLHttpRequest(); }
+  try { xhr = new ActiveXObject("Microsoft.XMLHTTP"); } catch (e) { xhr = new XMLHttpRequest(); }
 
   xhr.open("GET", filename, true);
   xhr.onreadystatechange = function() {
@@ -43,13 +44,19 @@ function plot_daily_graph_single(csvname, frame) {
         var xy = create_xy_heart(filename, xhr.responseText);
         plot_heart_list(xy["datetime_list"], xy["value_list"], frame);
 
-      } else if (csvname.match(/sleep/)) {
-        var xys = create_xys_sleep(filename, xhr.responseText);
-        plot_state_list(xys[0]["datetime_list"], xys[0]["value_list"], "#000000", frame); // 不明
-        plot_state_list(xys[1]["datetime_list"], xys[1]["value_list"], "#0000F0", frame); // asleep
-        plot_state_list(xys[2]["datetime_list"], xys[2]["value_list"], "#F000F0", frame); // restless
-        plot_state_list(xys[3]["datetime_list"], xys[3]["value_list"], "#F00000", frame); // wakeup
-
+      } else if (csvname.match(/sleep_analysis/)) {
+        var xys = create_xys_sleep_analysis(filename, xhr.responseText);
+        for (var key in xys) {
+          var x = xys[key]["datetime_list"];
+          var y = xys[key]["value_list"];
+          if (key.match(/^wake/    )) plot_state_list(x, y, "#FF0080", frame);
+          if (key.match(/^rem/     )) plot_state_list(x, y, "#B0B0FF", frame);
+          if (key.match(/^light/   )) plot_state_list(x, y, "#4040FF", frame);
+          if (key.match(/^deep/    )) plot_state_list(x, y, "#000080", frame);
+          if (key.match(/^awake/   )) plot_state_list(x, y, "#FF0080", frame);
+          if (key.match(/^restless/)) plot_state_list(x, y, "#4040FF", frame);
+          if (key.match(/^asleep/  )) plot_state_list(x, y, "#000080", frame);
+        }
       } else if (csvname.match(/minutesSedentary/)) {
         var xy = create_xy_activity(filename, xhr.responseText);
         plot_state_list(xy["datetime_list"], xy["value_list"], "#3000B0", frame);

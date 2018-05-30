@@ -1,6 +1,6 @@
 // デフォルトで1週間分表示
 add_all_element(
-  translate_unixtime_to_yyyymmdd((new Date().setHours(0,0,0,0)/1000) - 2*24*3600),
+  translate_unixtime_to_yyyymmdd((new Date().setHours(0,0,0,0)/1000) - 7*24*3600),
   translate_unixtime_to_yyyymmdd((new Date().setHours(0,0,0,0)/1000))
 );
 

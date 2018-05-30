@@ -1,30 +1,3 @@
-function create_xys_sleep(filename, content) {
-  var xys = [];
-  for (var i=0; i<4; i++) {
-    var xy = {
-      datetime_list : [],
-      value_list    : []
-    }
-    xys.push(xy);
-  }
-
-  var day = filename.split("/")[3].split('_')[0].replace(/-/g,"/");
-  var lines = content.split("\n");
-  for (var i=0; i<lines.length; ++i) {
-    var line = lines[i];
-    if (line.match(/[a-zA-Z]/i)) continue;
-    var tmp_time = line.split(",")[1];
-    var datetime = new Date(day + " " + tmp_time);
-    var value = Number(line.split(",")[2]);
-    if (value >= 0 && value < 4) {
-      xys[value]["datetime_list"].push(datetime);
-      xys[value]["value_list"].push(value*5);
-    }
-  }
-
-  return xys;
-}
-
 function create_xy_activity(filename, content) {
   var xy = {
     datetime_list : [],

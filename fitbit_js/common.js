@@ -9,7 +9,7 @@ function translate_unixtime_to_yyyymmdd(unixtime) {
 function isFileExists(filename) {
   var xhr = null;
   // 使える場合はMicrosoft.XMLHTTP, 使えない場合はXMLHttpRequest
-  try { xhr = new ActiveXObject("Msxml2.XMLHTTP"); } catch (e) { xhr = new XMLHttpRequest(); }
+  try { xhr = new ActiveXObject("Microsoft.XMLHTTP"); } catch (e) { xhr = new XMLHttpRequest(); }
 
   xhr.open("GET", filename, false);
   try {
