@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="jp">
+<head>
+<meta charset="utf-8"/>
+<link rel="stylesheet" type="text/css" href="fitbit_js/style.css">
+<script src="fitbit_js/plotly.js"></script>
+<script src="fitbit_js/common.js"></script>
+</head>
+<body>
+
+<div id="scroll-wrap">
+
+  <div id="long-span">
+    <div class="element-longspan" >
+      <div class="info" ><p class="title-longspan">日別装着外時間(分)</p></div>
+      <div class="panel" id="daily-lack-panel" ></div>
+    </div>
+
+    <div class="element-longspan" >
+      <div class="info" ><p class="title-longspan">日別平常時心拍</p></div>
+      <div class="panel" id="daily-heart-panel" ></div>
+    </div>
+
+    <div class="element-longspan" >
+      <div class="info" ><p class="title-longspan">日別カロリー</p></div>
+      <div class="panel" id="daily-calory-panel" ></div>
+    </div>
+
+    <div class="element-longspan" >
+      <div class="info" ><p class="title-longspan">日別歩数</p></div>
+      <div class="panel" id="daily-steps-panel" ></div>
+    </div>
+
+    <div class="element-longspan" >
+      <div class="info" ><p class="title-longspan">日別睡眠</p></div>
+      <div class="panel" id="daily-sleep-panel" ></div>
+    </div>
+  </div>
+
+  <div id="daily-span">
+    <!--
+    <form>
+      <input type="date" id="bgn_date">
+      <input type="date" id="end_date">
+      <button id="button">DRAW</button>
+    </form>
+    -->
+
+    <script>
+      //var today = new Date().setHours(0,0,0,0)/1000;
+      //document.getElementById("bgn_date").value = translate_unixtime_to_yyyymmdd(today-7*24*3600);
+      //document.getElementById("end_date").value = translate_unixtime_to_yyyymmdd(today);
+    </script>
+  </div>
+</div>
+
+<script src="fitbit_js/long_term.js"></script>
+<script src="fitbit_js/summary.js"></script>
+<script src="fitbit_js/heart.js"></script>
+<script src="fitbit_js/steps.js"></script>
+<script src="fitbit_js/sleep_analysis.js"></script>
+<script src="fitbit_js/state.js"></script>
+<script src="fitbit_js/lack.js"></script>
+<script src="fitbit_js/print.js"></script>
+<script src="fitbit_js/all_panel.js"></script>
+
+</body>
+</html>

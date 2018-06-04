@@ -1,4 +1,4 @@
-function create_xys_sleep_analysis(filename, content) {
+function create_xys_sleep(filename, content) {
   var xys = {};
 
   var day = filename.split("/")[3].split('_')[0].replace(/-/g,"/");

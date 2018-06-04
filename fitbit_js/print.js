@@ -6,10 +6,11 @@ function plot_daily_graph_all(frame) {
   for (var i=0; i<=day_term; i++) {
     var yyyymmdd = translate_unixtime_to_yyyymmdd(tmpday);
 
+    plot_daily_graph_single("lack/" +yyyymmdd+"_lack.csv" , frame);
     plot_daily_graph_single("heart/"+yyyymmdd+"_heart.csv", frame);
     plot_daily_graph_single("steps/"+yyyymmdd+"_steps.csv", frame);
-    plot_daily_graph_single("sleep_analysis/"+yyyymmdd+"_sleep_analysis.csv", frame);
-    // plot_daily_graph_single("minutesSedentary/"+yyyymmdd+"_minutesSedentary.csv", frame);
+    plot_daily_graph_single("sleep/"+yyyymmdd+"_sleep.csv", frame);
+    //plot_daily_graph_single("minutesSedentary/"+yyyymmdd+"_minutesSedentary.csv", frame);
     plot_daily_graph_single("minutesFairlyActive/"+yyyymmdd+"_minutesFairlyActive.csv", frame);
     plot_daily_graph_single("minutesLightlyActive/"+yyyymmdd+"_minutesLightlyActive.csv", frame);
     plot_daily_graph_single("minutesVeryActive/"+yyyymmdd+"_minutesVeryActive.csv", frame);
@@ -26,7 +27,6 @@ function plot_daily_graph_single(csvname, frame) {
   if      (isFileExists(weekly + csvname)) filename = weekly + csvname;
   else if (isFileExists(daily  + csvname)) filename = daily  + csvname;
   else return;
-  console.log(filename);
 
   var xhr = null;
   // 使える場合はMicrosoft.XMLHTTP, 使えない場合はXMLHttpRequest
@@ -44,8 +44,8 @@ function plot_daily_graph_single(csvname, frame) {
         var xy = create_xy_heart(filename, xhr.responseText);
         plot_heart_list(xy["datetime_list"], xy["value_list"], frame);
 
-      } else if (csvname.match(/sleep_analysis/)) {
-        var xys = create_xys_sleep_analysis(filename, xhr.responseText);
+      } else if (csvname.match(/sleep/)) {
+        var xys = create_xys_sleep(filename, xhr.responseText);
         for (var key in xys) {
           var x = xys[key]["datetime_list"];
           var y = xys[key]["value_list"];
@@ -72,6 +72,10 @@ function plot_daily_graph_single(csvname, frame) {
       } else if (csvname.match(/minutesVeryActive/)) {
         var xy = create_xy_activity(filename, xhr.responseText);
         plot_state_list(xy["datetime_list"], xy["value_list"], "#F00000", frame);
+
+      } else if (csvname.match(/lack/)) {
+        var xy = create_xy_lack(filename, xhr.responseText);
+        plot_lack_list(xy["datetime_list"], xy["value_list"], frame);
 
       }
     }

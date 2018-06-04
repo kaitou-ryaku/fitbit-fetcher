@@ -1,4 +1,4 @@
-function create_xy_steps(filename, content) {
+function create_xy_lack(filename, content) {
   var xy = {
     datetime_list : [],
     value_list    : []
@@ -8,20 +8,20 @@ function create_xy_steps(filename, content) {
   var lines = content.split("\n");
   for (var i = 0; i < lines.length;++i) {
     var line = lines[i];
-    if (line.match(/[a-zA-Z]/i)) continue;
-    var value = line.split(",")[1];
-    if (value === "0") continue;
+    var start = new Date(day + " " + line.split(",")[0]);
+    var stop  = new Date(day + " " + line.split(",")[1]);
 
-    xy["value_list"].push(value);
-    var tmp_time = line.split(",")[0];
-    var datetime = new Date(day + " " + tmp_time);
-    xy["datetime_list"].push(datetime);
+    for (var tmp = start; tmp < stop; tmp.setMinutes(tmp.getMinutes() + 1)) {
+      var lack = new Date(tmp.getTime());
+      xy["datetime_list"].push(lack);
+      xy["value_list"].push("200");
+    }
   }
 
   return xy;
 }
 
-function plot_steps_list(datetime_list, value_list, frame) {
+function plot_lack_list(datetime_list, value_list, frame) {
   var element = document.getElementById(frame['frame_id']);
 
   var dataset = [{
@@ -29,8 +29,8 @@ function plot_steps_list(datetime_list, value_list, frame) {
     y      : value_list,
     type   : 'bar',
     marker : {
-      color   : "#008000",
-      opacity : 0.5
+      color   : "#000000",
+      opacity : 1,
     }
   }];
 

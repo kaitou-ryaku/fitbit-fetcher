@@ -72,14 +72,14 @@ def args_to_initialize(args):
 
   return ret
 
-def get_sleep_json(get_day, access_token):
+def save_sleep_json(get_day, access_token):
 
   if get_day < PURCHASE_DATE :
     return
 
   get_day_str = get_day.strftime("%Y-%m-%d")
-  filename = '{0}/{1}/{2}_{3}.json'.format(CSV_PATH, "sleep_json", get_day_str, "sleep_json")
-  if (not IF_OVERWRITE) and os.path.exists(filename) :
+  jsonname = '{0}/sleep/{1}_sleep.json'.format(CSV_PATH, get_day_str)
+  if (not IF_OVERWRITE) and os.path.exists(jsonname) :
     return
 
   headers = {
@@ -93,18 +93,18 @@ def get_sleep_json(get_day, access_token):
   if "Too" in str(response.json()):
     return
 
-  f = open(filename, 'w')
+  f = open(jsonname, 'w')
   f.write(str(response.json()))
   f.close()
 
-def get_sleep_analysis(get_day):
+def save_sleep_csv(get_day):
 
   if get_day < PURCHASE_DATE :
     return
 
   get_day_str = get_day.strftime("%Y-%m-%d")
-  filename = '{0}/{1}/{2}_{3}.csv'.format(CSV_PATH, "sleep_analysis", get_day_str, "sleep_analysis")
-  if (not IF_OVERWRITE) and os.path.exists(filename) :
+  csvname = '{0}/sleep/{1}_sleep.csv'.format(CSV_PATH, get_day_str)
+  if (not IF_OVERWRITE) and os.path.exists(csvname) :
     return
 
   sleep_list = []
@@ -113,11 +113,11 @@ def get_sleep_analysis(get_day):
     day = get_day + datetime.timedelta(delta)
     day_str = day.strftime("%Y-%m-%d")
 
-    json_filename = '{0}/{1}/{2}_{3}.json'.format(CSV_PATH, "sleep_json", day_str, "sleep_json")
-    if not os.path.exists(json_filename):
+    jsonname = '{0}/sleep/{1}_sleep.json'.format(CSV_PATH, day_str)
+    if not os.path.exists(jsonname):
       continue
 
-    json_data = literal_eval(open(json_filename, 'r').read())
+    json_data = literal_eval(open(jsonname, 'r').read())
 
     for connected_sleep in json_data["sleep"]:
       for connected_30secs in connected_sleep["levels"]["data"]:
@@ -133,7 +133,7 @@ def get_sleep_analysis(get_day):
 
   sleep_list.sort
 
-  f = open(filename, 'w')
+  f = open(csvname, 'w')
   for sleep in sleep_list:
     if sleep[0].date() == get_day:
       f.write(sleep[0].strftime("%H:%M:%S") + "," + sleep[1] + "\n")
@@ -148,12 +148,12 @@ def main(args):
   # 1週間+1日分のjsonデータを取得
   for day_back in range(latest_day, oldest_day + 1):
     get_day = datetime.date.today() - datetime.timedelta(day_back)
-    get_sleep_json(get_day, access_token)
+    save_sleep_json(get_day, access_token)
 
   # 1週間分の睡眠データを計算
   for day_back in range(latest_day, oldest_day):
     get_day = datetime.date.today() - datetime.timedelta(day_back)
-    get_sleep_analysis(get_day)
+    save_sleep_csv(get_day)
 
 if __name__ == "__main__":
   main(sys.argv[1:])

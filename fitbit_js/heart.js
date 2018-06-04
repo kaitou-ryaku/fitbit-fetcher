@@ -7,7 +7,7 @@ function create_xy_heart(filename, content) {
   var day = filename.split("/")[3].split('_')[0].replace(/-/g,"/")
   var lines = content.split("\n");
   for (var i = 0; i < lines.length;++i) {
-    if (i%4 !== 0) continue;
+    if (i%12 !== 0) continue;
     var line = lines[i];
     if (line.match(/[a-zA-Z]/i)) continue;
     var tmp_time = line.split(",")[0];

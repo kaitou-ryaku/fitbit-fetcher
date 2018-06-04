@@ -26,8 +26,8 @@ function common_layout(frame) {
   var layout = {
     title      : "",
     autosize   : false,
-    width      : Math.round(window.innerWidth*0.9),
-    height     : 200,
+    width      : Math.round(window.innerWidth )*0.8,
+    height     : Math.round(window.innerHeight)*0.2,
     margin     : {l:50, r:0, b:20, t:15, pad:0},
     showlegend : false,
     hovermode  : "closest",
@@ -47,3 +47,10 @@ function common_layout(frame) {
   return layout;
 }
 
+function second_to_hm(second) {
+  var h     = Math.floor(second / 3600.0);
+  var m     = Math.floor(second / 60.0 - h * 60.0);
+  var h_str = (new Number(h)).toFixed();
+  var m_str = ("00" + (new Number(m)).toFixed()).slice(-2);
+  return h_str + ":" + m_str;
+}

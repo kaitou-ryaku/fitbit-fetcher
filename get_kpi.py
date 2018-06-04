@@ -55,92 +55,96 @@ def args_to_initialize(args):
   new_access_token  = new_token_dict['access_token']
   new_refresh_token = new_token_dict['refresh_token']
 
-  ret = {"client_file"   : client_file
-    ,    "token_file"    : token_file
-    ,    "CSV_PATH"      : CSV_PATH
-    ,    "latest_day"    : latest_day
-    ,    "oldest_day"    : oldest_day
-    ,    "IF_OVERWRITE"  : IF_OVERWRITE
-    ,    "client_id"     : client_id
-    ,    "client_secret" : client_secret
-    ,    "PURCHASE_DATE" : PURCHASE_DATE
-    ,    "access_token"  : new_access_token
-    ,    "refresh_token" : new_refresh_token
-    ,    "client"        : client
+  ret = {'client_file'   : client_file
+    ,    'token_file'    : token_file
+    ,    'CSV_PATH'      : CSV_PATH
+    ,    'latest_day'    : latest_day
+    ,    'oldest_day'    : oldest_day
+    ,    'IF_OVERWRITE'  : IF_OVERWRITE
+    ,    'client_id'     : client_id
+    ,    'client_secret' : client_secret
+    ,    'PURCHASE_DATE' : PURCHASE_DATE
+    ,    'access_token'  : new_access_token
+    ,    'refresh_token' : new_refresh_token
+    ,    'client'        : client
   }
 
   return ret
 
-def make_month_file(client, get_day, path, detail_level, column_name, dir_name):
+def save_json_csv(client, get_day, path, detail_level, column_name, dir_name):
 
   if get_day < PURCHASE_DATE :
     return
 
   get_day_str = get_day.strftime('%Y-%m-%d')
-  filename    = '{0}/{1}/{2}_{3}.csv'.format(CSV_PATH, dir_name, get_day_str, dir_name)
-  if (not IF_OVERWRITE) and os.path.exists(filename) :
+  csvname     = '{0}/{1}/{2}_{3}.csv'.format(CSV_PATH, dir_name, get_day_str, dir_name)
+  if (not IF_OVERWRITE) and os.path.exists(csvname) :
     return
 
   terms_alldata = client.intraday_time_series(path, base_date=get_day_str, detail_level=detail_level)
-  many_terms = terms_alldata[column_name]['dataset']
 
-  f = open(filename, 'w')
-
-  for term in many_terms:
-    f.write("{0},{1}\n".format(term['time'], str(term['value'])))
-
+  jsonname = '{0}/{1}/{2}_{3}.json'.format(CSV_PATH, dir_name, get_day_str, dir_name)
+  f = open(jsonname, 'w')
+  f.write(str(terms_alldata))
   f.close()
 
+  many_terms = terms_alldata[column_name]['dataset']
 
-def make_month_sleep_file(client, get_day):
+  f = open(csvname, 'w')
+  for term in many_terms:
+    f.write('{0},{1}\n'.format(term['time'], str(term['value'])))
+  f.close()
+
+def save_lack_second_csv(get_day):
 
   if get_day < PURCHASE_DATE :
     return
 
   get_day_str = get_day.strftime('%Y-%m-%d')
-  filename    = '{0}/sleep/{1}_sleep.csv'.format(CSV_PATH, get_day_str)
-  if (not IF_OVERWRITE) and os.path.exists(filename) :
+  csvname     = '{0}/{1}/{2}_{3}.csv'.format(CSV_PATH, 'lack', get_day_str, 'lack')
+  if (not IF_OVERWRITE) and os.path.exists(csvname) :
+    return
+  f = open(csvname, 'w')
+
+  jsonname = '{0}/{1}/{2}_{3}.json'.format(CSV_PATH, 'heart', get_day_str, 'heart')
+  if not os.path.exists(jsonname):
     return
 
-  sleep_all = client.sleep(date=get_day_str)
-  many_sleep = sleep_all['sleep']
+  json_data = literal_eval(open(jsonname, 'r').read())
 
-  f = open(filename, 'w')
-
-  sleep_count = 0
-  for sleep in many_sleep:
-    for key, value in sleep.items():
-      if key == 'minuteData':
-        continue
-      f.write('{0},{1},{2}\n'.format(sleep_count, key, value))
-
-    minuteData = sleep['minuteData']
-    for pair in minuteData:
-      f.write('{0},{1},{2}\n'.format(sleep_count, pair['dateTime'], str(pair['value'])))
-
-    sleep_count += 1
+  before = datetime.datetime.strptime('00:00:00', '%H:%M:%S')
+  json_data['activities-heart-intraday']['dataset'].append({'time':'23:59:59'})
+  for term in json_data['activities-heart-intraday']['dataset']:
+    current = datetime.datetime.strptime(term['time'], '%H:%M:%S')
+    if before + datetime.timedelta(minutes=1) < current:
+      f.write(before.strftime('%H:%M:%S'))
+      f.write(',')
+      f.write(current.strftime('%H:%M:%S'))
+      f.write(',')
+      f.write(str(int((current-before).total_seconds())))
+      f.write('\n')
+    before  = current
 
   f.close()
 
 def main(args):
   initialize = args_to_initialize(args)
-  client     = initialize["client"]
-  latest_day = initialize["latest_day"]
-  oldest_day = initialize["oldest_day"]
+  client     = initialize['client']
+  latest_day = initialize['latest_day']
+  oldest_day = initialize['oldest_day']
 
   for day_back in range(latest_day, oldest_day):
     get_day = datetime.date.today() - datetime.timedelta(day_back)
 
-    make_month_file(client, get_day, 'activities/heart'                ,'1sec' ,'activities-heart-intraday'                ,'heart')
-    make_month_file(client, get_day, 'activities/distance'             ,'1min' ,'activities-distance-intraday'             ,'distance')
-    make_month_file(client, get_day, 'activities/steps'                ,'1min' ,'activities-steps-intraday'                ,'steps')
-    make_month_file(client, get_day, 'activities/floors'               ,'1min' ,'activities-floors-intraday'               ,'floors')
-    make_month_file(client, get_day, 'activities/minutesSedentary'     ,'1min' ,'activities-minutesSedentary-intraday'     ,'minutesSedentary')
-    make_month_file(client, get_day, 'activities/minutesLightlyActive' ,'1min' ,'activities-minutesLightlyActive-intraday' ,'minutesLightlyActive')
-    make_month_file(client, get_day, 'activities/minutesFairlyActive'  ,'1min' ,'activities-minutesFairlyActive-intraday'  ,'minutesFairlyActive')
-    make_month_file(client, get_day, 'activities/minutesVeryActive'    ,'1min' ,'activities-minutesVeryActive-intraday'    ,'minutesVeryActive')
-
-    make_month_sleep_file(client, get_day)
+    save_json_csv(client, get_day, 'activities/heart'                ,'1sec' ,'activities-heart-intraday'                ,'heart')
+    save_json_csv(client, get_day, 'activities/distance'             ,'1min' ,'activities-distance-intraday'             ,'distance')
+    save_json_csv(client, get_day, 'activities/steps'                ,'1min' ,'activities-steps-intraday'                ,'steps')
+    save_json_csv(client, get_day, 'activities/floors'               ,'1min' ,'activities-floors-intraday'               ,'floors')
+    save_json_csv(client, get_day, 'activities/minutesSedentary'     ,'1min' ,'activities-minutesSedentary-intraday'     ,'minutesSedentary')
+    save_json_csv(client, get_day, 'activities/minutesLightlyActive' ,'1min' ,'activities-minutesLightlyActive-intraday' ,'minutesLightlyActive')
+    save_json_csv(client, get_day, 'activities/minutesFairlyActive'  ,'1min' ,'activities-minutesFairlyActive-intraday'  ,'minutesFairlyActive')
+    save_json_csv(client, get_day, 'activities/minutesVeryActive'    ,'1min' ,'activities-minutesVeryActive-intraday'    ,'minutesVeryActive')
+    save_lack_second_csv(get_day)
 
 if __name__ == '__main__':
   main(sys.argv[1:])

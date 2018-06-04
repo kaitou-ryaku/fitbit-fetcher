@@ -1,0 +1,146 @@
+*{
+  margin:0;
+  padding:0;
+  border:0;
+}
+
+body{
+  font:30pxsans-serif;
+  background: #000000;
+}
+
+div#scroll-wrap{
+  overflow  :scroll;
+  height    :100vh;
+  width     :100vw;
+}
+
+div.element-longspan {
+  overflow  : hidden;
+  background: #C0C0C0;
+  margin    : 3px;
+}
+
+div.element-saturday {
+  overflow  : hidden;
+  height    : 20vh;
+  background: #C0C0F0;
+  margin    : 3px;
+}
+
+div.element-sunday {
+  overflow  : hidden;
+  height    : 20vh;
+  background: #F0C0C0;
+  margin    : 3px;
+}
+
+div.element-weekday {
+  overflow  : hidden;
+  height    : 20vh;
+  background: #C0C0C0;
+  margin    : 3px;
+}
+
+div.info {
+  float : left;
+  width : 15vw;
+  margin: 1vw;
+}
+
+div.summary {
+  float : left;
+  width : 15vw;
+}
+
+div.panel {
+  float : right;
+}
+
+
+div.kpi {
+  float   : left;
+  width   : 15vw;
+}
+
+p.steps_kpi {
+  color   : #008000;
+  float   : left;
+  display : inline;
+  width   : 3vw;
+}
+
+p.sleep_sum_kpi {
+  color   : #0000FF;
+  float   : left;
+  display : inline;
+  width   : 3vw;
+}
+
+p.wake_kpi {
+  color   : #FF0080;
+  float   : left;
+  display : inline;
+  width   : 3vw;
+}
+
+p.rem_kpi {
+  color   : #B0B0FF;
+  float   : left;
+  display : inline;
+  width   : 3vw;
+}
+
+p.light_kpi {
+  color   : #4040FF;
+  float   : left;
+  display : inline;
+  width   : 3vw;
+}
+
+p.deep_kpi {
+  color   : #000080;
+  float   : left;
+  display : inline;
+  width   : 3vw;
+}
+
+p.restless_kpi {
+  color   : #4040FF;
+  float   : left;
+  display : inline;
+  width   : 3vw;
+}
+
+p.asleep_kpi {
+  color   : #000080;
+  float   : left;
+  display : inline;
+  width   : 3vw;
+}
+
+p.title-longspan {
+  font-weight : bold;
+  color       : #000000;
+}
+
+p.title-weekday {
+  font-weight : bold;
+  color       : #000000;
+}
+
+p.title-saturday {
+  font-weight : bold;
+  color       : #0000FF;
+}
+
+p.title-sunday {
+  font-weight : bold;
+  color       : #FF0000;
+}
+
+div#long-span {
+}
+
+div#daily-span {
+}
